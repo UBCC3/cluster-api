@@ -58,6 +58,7 @@ def check_job_status(db_job_id, slurm_job_id):
                 state = parts[state_index]
                 derived_exit_code = parts[derived_exit_code_index]
                 if state == "COMPLETED" and derived_exit_code == "0:0":
+                    # TODO: process the result files into the one will be used in the platform and a zipped one
                     return 1
                 else:
                     # Common status:
@@ -87,3 +88,4 @@ if __name__ == "__main__":
     for key in input_data:
         input_data[key] = check_job_queue(input_data[key])
     print(json.dumps(input_data))
+    
