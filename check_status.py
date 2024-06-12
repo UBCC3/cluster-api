@@ -1,4 +1,6 @@
+import json
 import subprocess
+import sys
 
 # check if the job is still in the queue or not
 def check_job_queue(db_job_id):
@@ -10,13 +12,12 @@ def check_job_queue(db_job_id):
         result = subprocess.run(ssh_command, capture_output=True, text=True, check=True)
         # if the job is still pending or in progress
         if result.stdout: 
-            # TODO: can be updated with a more helpful return message
-            print("still running") 
+            return 0
         # if the job is completed or failed
         else:
             return check_job_status(db_job_id, slurm_job_id)
     except subprocess.CalledProcessError as e:
-        print(f"Command failed with error: {e.stderr}")
+        return f"Command failed with error: {e.stderr}"
 
 # fetch the job id in the slurm system using the the value of job id in the database
 def fetch_slurm_job_id(db_job_id):
@@ -29,7 +30,7 @@ def fetch_slurm_job_id(db_job_id):
         result = subprocess.run(ssh_command, capture_output=True, text=True, check=True)
         return result.stdout.strip()
     except subprocess.CalledProcessError as e:
-        print(f"Command failed with error: {e.stderr}")
+        return f"Command failed with error: {e.stderr}"
         
 # check the specifc job status when the job is not in the queue
 def check_job_status(db_job_id, slurm_job_id):
@@ -57,7 +58,7 @@ def check_job_status(db_job_id, slurm_job_id):
                 state = parts[state_index]
                 derived_exit_code = parts[derived_exit_code_index]
                 if state == "COMPLETED" and derived_exit_code == "0:0":
-                    print(f'Job {db_job_id} is completed')
+                    return 1
                 else:
                     # Common status:
                     # CANCELLED: Job was cancelled by the user or a sysadmin
@@ -65,7 +66,24 @@ def check_job_status(db_job_id, slurm_job_id):
                     # OUT_OF_MEMORY: Job was killed for using too much memory
                     # TIMEOUT: Job was killed for exceeding its time limit
                     comment = parts[comment_index] if comment_index is not None else "No additional info"
-                    print(f"Job {db_job_id} failed with exit code {derived_exit_code}. Reason: {comment}")    
+                    return json.dumps({"exitcode": derived_exit_code, "reason": comment})
     except subprocess.CalledProcessError as e:
-        print(f"Command failed with error: {e.stderr}")
-        
+        return f"Command failed with error: {e.stderr}"
+
+if __name__ == "__main__":
+    """
+    Sample input:
+    {
+        "jobid1": 0,
+        "jobid2": 0,
+        "jobid3": 0
+    }
+    for each value:
+    - 0 indicate the job is still pending or inprogress
+    - 1 indicate the job is completed
+    - ...
+    """
+    input_data = json.load(sys.stdin)
+    for key in input_data:
+        input_data[key] = check_job_queue(input_data[key])
+    print(json.dumps(input_data))
