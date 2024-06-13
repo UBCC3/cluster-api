@@ -5,11 +5,10 @@ import sys
 import requests
 
 def fetch_result(file_path):
-    command = f'cat {file_path}' 
-    ssh_command = ["ssh cluster", command]
+    command = ["cat", file_path]
     
     try:
-        result = subprocess.run(ssh_command, capture_output=True, text=True, check=True)
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
         return result.stdout
     except subprocess.CalledProcessError as e:
         print(f"Error fetching file: {e}")
@@ -39,6 +38,7 @@ if __name__ == "__main__":
                                           files=files)
             if http_response.status_code == 204:
                 print(json.dumps(fetch_result(result_path)))
+                # TODO: handle delete file
             else:
                 print(f"Upload failed with status code: {http_response.status_code}")
     except FileNotFoundError:

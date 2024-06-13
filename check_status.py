@@ -5,11 +5,10 @@ import sys
 # check if the job is still in the queue or not
 def check_job_queue(db_job_id):
     slurm_job_id =  fetch_slurm_job_id(db_job_id)
-    command = f'squeue --jobs {slurm_job_id}'
-    ssh_command = ["ssh cluster", command]
+    command = ["squeue", "--jobs", slurm_job_id]
     
     try:
-        result = subprocess.run(ssh_command, capture_output=True, text=True, check=True)
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
         # if the job is still pending or in progress
         if result.stdout: 
             return 0
@@ -23,22 +22,20 @@ def check_job_queue(db_job_id):
 def fetch_slurm_job_id(db_job_id):
     # TODO: update "slurm_id" with the actual file name that stores the job id in slurm system
     file_path = f'scratch/ubchemica/{db_job_id}/slurm_id.txt'
-    command = f'cat {file_path}'
-    ssh_command = ["ssh cluster", command]
+    command = ["cat", file_path]
     
     try:
-        result = subprocess.run(ssh_command, capture_output=True, text=True, check=True)
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
         return result.stdout.strip()
     except subprocess.CalledProcessError as e:
         return f"Command failed with error: {e.stderr}"
         
 # check the specifc job status when the job is not in the queue
 def check_job_status(db_job_id, slurm_job_id):
-    command = f'sacct --jobs {slurm_job_id} --format=JobID,State,DerivedExitCode,Comment'
-    ssh_command = ["ssh cluster", command]
+    command = ["sacct", "--jobs", slurm_job_id, "--format=JobID,State,DerivedExitCode,Comment"]
     
     try:
-        result = subprocess.run(ssh_command, capture_output=True, text=True, check=True)
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
         # Sample result.stdout
         # JobID           State      DerivedExitCode    ....
         # ------------    ---------- --------
