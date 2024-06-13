@@ -3,7 +3,8 @@ import json
 import subprocess
 
 if len(sys.argv) != 2:
-    raise Exception("Usage: python3 submit_jobs.py '{json details}'")
+    print(len(sys.argv))
+    raise Exception("Usage: python3 submit_job.py '{json details}'")
 
 # TODO: Add S3 Upload
 # TODO: Add clean up scripts
