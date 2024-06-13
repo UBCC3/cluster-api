@@ -2,10 +2,6 @@ import sys
 import json
 import subprocess
 
-if len(sys.argv) != 2:
-    print(len(sys.argv))
-    raise Exception("Usage: python3 submit_job.py '{json details}'")
-
 # TODO: Add S3 Upload
 # TODO: Add clean up scripts
 def write_sbatch_script(job_name, command):
@@ -24,7 +20,11 @@ def write_sbatch_script(job_name, command):
 def submit_sbatch_script(script_path):
     result = subprocess.run(['sbatch', script_path], capture_output=True, text=True)
     print(result)
+# NOTE: Input JSON cannot have any spaces in it
 if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        raise Exception("Too many arguments: ", len(sys.argv), "\nUsage: python3 submit_job.py '{json details}'")
+
     job_input_data = json.loads(sys.argv[1])
     job_sql_id = job_input_data["id"]
     job_basis_set = job_input_data["basisSet"]
