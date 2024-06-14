@@ -6,12 +6,11 @@ import requests
 
 def fetch_result(file_path):
     command = ["cat", file_path]
-    
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         return result.stdout
     except subprocess.CalledProcessError as e:
-        print(f"Error fetching file: {e}")
+        raise Exception(f"Error: {e}")
 
 if __name__ == "__main__":
     """
@@ -37,11 +36,14 @@ if __name__ == "__main__":
                                           data=presigned_response['fields'], 
                                           files=files)
             if http_response.status_code == 204:
-                print(json.dumps(fetch_result(result_path)))
-                # TODO: handle delete file
+                return_data = {"status_code": http_response.status_code, "output": fetch_result(result_path)}
+                print(json.dumps(return_data))
             else:
-                print(f"Upload failed with status code: {http_response.status_code}")
-    except FileNotFoundError:
-        print(f"Error: The file {result_path} does not exist.")
+                return_data = {"status_code": http_response.status_code}
+                print(json.dumps(return_data))
     except requests.RequestException as e:
-        print(f"HTTP Request failed: {str(e)}")
+        error_message = f'HTTP request fail with {str(e)}'
+        print(json.dumps({"Error": error_message}))
+    except Exception as e:
+        print(json.dumps({"Error": str(e)}))
+        
