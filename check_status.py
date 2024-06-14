@@ -4,10 +4,9 @@ import sys
 
 # check if the job is still in the queue or not
 def check_job_queue(db_job_id):
-    slurm_job_id =  fetch_slurm_job_id(db_job_id)
-    command = ["squeue", "--jobs", slurm_job_id]
-    
     try:
+        slurm_job_id =  fetch_slurm_job_id(db_job_id)
+        command = ["squeue", "--jobs", slurm_job_id]
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         # if the job is still pending or in progress
         if result.stdout: 
@@ -16,24 +15,24 @@ def check_job_queue(db_job_id):
         else:
             return check_job_status(db_job_id, slurm_job_id)
     except subprocess.CalledProcessError as e:
-        return f"Command failed with error: {e.stderr}"
+        return f"Error: {e.stderr}"
+    except Exception as e:
+        return str(e)
 
 # fetch the job id in the slurm system using the the value of job id in the database
 def fetch_slurm_job_id(db_job_id):
     # TODO: update "slurm_id" with the actual file name that stores the job id in slurm system
     file_path = f'scratch/ubchemica/{db_job_id}/slurm_id.txt'
     command = ["cat", file_path]
-    
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         return result.stdout.strip()
     except subprocess.CalledProcessError as e:
-        return f"Command failed with error: {e.stderr}"
+        raise Exception(f"Error: {e.stderr}")
         
 # check the specifc job status when the job is not in the queue
 def check_job_status(db_job_id, slurm_job_id):
     command = ["sacct", "--jobs", slurm_job_id, "--format=JobID,State,DerivedExitCode,Comment"]
-    
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         # Sample result.stdout
@@ -48,7 +47,6 @@ def check_job_status(db_job_id, slurm_job_id):
         state_index = header.index("State")
         derived_exit_code_index = header.index("DerivedExitCode")
         comment_index = header.index("Comment") if "Comment" in header else None
-        
         for line in lines[2:]:
             parts = line.split()
             if parts[job_index] == str(slurm_job_id):
@@ -66,7 +64,7 @@ def check_job_status(db_job_id, slurm_job_id):
                     comment = parts[comment_index] if comment_index is not None else "No additional info"
                     return json.dumps({"exitcode": derived_exit_code, "reason": comment})
     except subprocess.CalledProcessError as e:
-        return f"Command failed with error: {e.stderr}"
+        raise Exception(f"Error: {e.stderr}")
 
 if __name__ == "__main__":
     """
