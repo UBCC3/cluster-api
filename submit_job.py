@@ -1,4 +1,3 @@
-import sys
 import json
 import subprocess
 import os
@@ -23,16 +22,17 @@ def write_sbatch_script(job_name, command):
         rm -r {job_name}
                    ''')
 def submit_sbatch_script(script_path):
-    result = subprocess.run(['sbatch', script_path  + "/submit_job.sh"], capture_output=True, text=True)
+    result = subprocess.run(["sbatch", script_path  + "/submit_job.sh"], capture_output=True, text=True)
     print(result)
     clean_up_result = subprocess.run(["sbatch", script_path + "/clean_up.sh"],capture_output=True, text=True)
     print(clean_up_result)
 # NOTE: Input JSON cannot have any spaces in it
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        raise Exception("Too many arguments: ", len(sys.argv), "\nUsage: python3 submit_job.py '{json details}'")
-
-    job_input_data = json.loads(sys.argv[1])
+    raw_json = input()
+    try:
+        job_input_data = json.loads(raw_json)
+    except:
+        print("Error parsing json")
     job_sql_id = job_input_data["id"]
     job_basis_set = job_input_data["basisSet"]
     job_theory = job_input_data["theory"]
