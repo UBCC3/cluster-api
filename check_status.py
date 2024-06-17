@@ -1,3 +1,4 @@
+import base64
 import json
 import subprocess
 import sys
@@ -15,7 +16,7 @@ def check_job_queue(db_job_id):
         else:
             return check_job_status(db_job_id, slurm_job_id)
     except subprocess.CalledProcessError as e:
-        return f"Error: {e.stderr}"
+        return f'Error: {e.stderr}'
     except Exception as e:
         return str(e)
 
@@ -28,7 +29,7 @@ def fetch_slurm_job_id(db_job_id):
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         return result.stdout.strip()
     except subprocess.CalledProcessError as e:
-        raise Exception(f"Error: {e.stderr}")
+        raise Exception(f'Error: {e.stderr}')
         
 # check the specifc job status when the job is not in the queue
 def check_job_status(db_job_id, slurm_job_id):
@@ -64,7 +65,7 @@ def check_job_status(db_job_id, slurm_job_id):
                     comment = parts[comment_index] if comment_index is not None else "No additional info"
                     return json.dumps({"exitcode": derived_exit_code, "reason": comment})
     except subprocess.CalledProcessError as e:
-        raise Exception(f"Error: {e.stderr}")
+        raise Exception(f'Error: {e.stderr}')
 
 if __name__ == "__main__":
     """
@@ -81,6 +82,7 @@ if __name__ == "__main__":
     """
     input_data = json.load(sys.stdin)
     for key in input_data:
-        input_data[key] = check_job_queue(input_data[key])
-    print(json.dumps(input_data))
+        input_data[key] = check_job_queue(key)
+    encoded_json_data = base64.b64encode(json.dumps(input_data).encode()).decode('utf-8')
+    print(encoded_json_data)
     
