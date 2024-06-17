@@ -2,6 +2,7 @@ import base64
 import json
 import subprocess
 import sys
+import zipfile
 
 # check if the job is still in the queue or not
 def check_job_queue(db_job_id):
@@ -54,7 +55,11 @@ def check_job_status(db_job_id, slurm_job_id):
                 state = parts[state_index]
                 derived_exit_code = parts[derived_exit_code_index]
                 if state == "COMPLETED" and derived_exit_code == "0:0":
-                    # TODO: process the result files into the one will be used in the platform and a zipped one
+                    # TODO: process the result files into the one will be used in the platform
+                    # TODO: update with the actual file path
+                    result_path = f'/ubchemica/{db_job_id}/'
+                    output_zip_path = f'/ubchemica/archive/{db_job_id}.zip'
+                    zip_output_files(result_path, output_zip_path)
                     return 1
                 else:
                     # Common status:
@@ -66,7 +71,12 @@ def check_job_status(db_job_id, slurm_job_id):
                     return json.dumps({"exitcode": derived_exit_code, "reason": comment})
     except subprocess.CalledProcessError as e:
         raise Exception(f'Error: {e.stderr}')
-
+    
+def zip_output_files(file_path, output_zip_path):
+    with zipfile.ZipFile(output_zip_path, 'w') as zip:
+        for file in file_path:
+            zip.write(file)
+    
 if __name__ == "__main__":
     """
     Sample input:
