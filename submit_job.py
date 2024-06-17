@@ -24,8 +24,19 @@ def write_sbatch_script(job_name, command):
 def submit_sbatch_script(script_path):
     result = subprocess.run(["sbatch", script_path  + "/submit_job.sh"], capture_output=True, text=True)
     print(result)
-    clean_up_result = subprocess.run(["sbatch", script_path + "/clean_up.sh"],capture_output=True, text=True)
-    print(clean_up_result)
+    try:
+        slurm_job_id = (result.stdout.split()[-1])
+        current_path = os.path.join("./"+script_path)
+        with open(current_path + "/slurm_id.txt", "w") as file:
+            file.write(slurm_job_id)
+        clean_up_result = subprocess.run(["sbatch", script_path + "/clean_up.sh"],capture_output=True, text=True)
+        print(clean_up_result)
+    except:
+        print("JOB SUBMIT ERROR", result.stderr)
+        clean_up_result = subprocess.run(["sbatch", script_path + "/clean_up.sh"],capture_output=True, text=True)
+        print(clean_up_result)
+        raise Exception
+
 # NOTE: Input JSON cannot have any spaces in it
 if __name__ == "__main__":
     raw_json = input()
