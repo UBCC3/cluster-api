@@ -37,16 +37,10 @@ if __name__ == "__main__":
             http_response = requests.post(presigned_response['url'], 
                                           data=presigned_response['fields'], 
                                           files=files)
-            if http_response.status_code == 204:
-                return_data = {"status_code": http_response.status_code, "output": fetch_result(result_path)}
-                return_json = json.dumps(return_data)
-                return_encoded_json = base64.b64encode(return_json.encode()).decode('utf-8')
-                print(json.dumps(return_encoded_json))
-            else:
-                return_data = {"status_code": http_response.status_code}
-                return_json = json.dumps(return_data)
-                return_encoded_json = base64.b64encode(return_json.encode()).decode('utf-8')
-                print(json.dumps(return_encoded_json))
+            return_data = {"status_code": http_response.status_code}
+            return_json = json.dumps(return_data)
+            return_encoded_json = base64.b64encode(return_json.encode()).decode('utf-8')
+            print(json.dumps(return_encoded_json))
     except requests.RequestException as e:
         error_message = f'HTTP request fail with {str(e)}'
         return_json = json.dumps({"Error": error_message})
