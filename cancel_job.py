@@ -14,6 +14,5 @@ def find_job_id(job_name):
     except FileNotFoundError as error:
         raise error
     return True
-if __name__ == "__main__":
-    db_job_id = input()
+def cancel_job(db_job_id: str) -> bool:
     find_job_id(db_job_id)

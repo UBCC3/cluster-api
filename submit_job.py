@@ -14,7 +14,10 @@ def write_sbatch_script(job_name, command):
         #SBATCH --job-name={job_name}
         #SBATCH --output={job_name}.out
         #SBATCH --error={job_name}.err
-        {command}
+        
+        load module psi4
+
+
 
         ''')
     with open(cur_path + "/clean_up.sh", "w") as file:
@@ -38,12 +41,7 @@ def submit_sbatch_script(script_path):
         raise Exception
 
 # NOTE: Input JSON cannot have any spaces in it
-if __name__ == "__main__":
-    raw_json = input()
-    try:
-        job_input_data = json.loads(raw_json)
-    except:
-        print("Error parsing json")
+def submit_job(job_input_data: dict) -> None:
     job_sql_id = job_input_data["id"]
     job_basis_set = job_input_data["basisSet"]
     job_theory = job_input_data["theory"]
