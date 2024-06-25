@@ -1,6 +1,7 @@
 import json
 import subprocess
 import os
+from .util import clean_up
 # TODO: Add S3 Upload
 # TODO: Add clean up scripts
 def write_sbatch_script(job_name, command):
@@ -30,7 +31,7 @@ def submit_sbatch_script(script_path):
             file.write(slurm_job_id)
     except:
         print("JOB SUBMIT ERROR", result.stderr)
-        clean_up_result = subprocess.run(["sbatch", script_path + "/clean_up.sh"],capture_output=True, text=True)
+        clean_up_result = clean_up(script_path)
         print(clean_up_result)
         raise Exception
 
