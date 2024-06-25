@@ -1,0 +1,70 @@
+{
+    "job information": {
+        "_comment": "information can get from the database like jobId, jobName, startTime, endTime, executionTime, status do not need to be included in here",
+        "totalFileSize": "2 GB"
+    },
+    "structure information": {
+        "1": {
+            "visualData": {
+                "dataContent": "sample long string (read a file and parse in the content into this field)" 
+            },
+            "genericData": {
+                "structureId": "sampleId (only default structure has structure id)",
+                "structureName": "Interactive molecular structure"
+            },
+            "tableData": [
+                {
+                    "tableName": "Experimental Vibrational Frequencies",
+                    "headers": [
+                        {"label": "name", "span": 1},
+                        {"label": "predefined basis sets", "span": 1},
+                        {"label": "energies in hartrees", "span": 1}
+                    ],
+                    "rows": [
+                        {"id": 1, "value": ["Pentane, 2-methyl-", "G1", "-236.524913"]},
+                        {"id": 2, "value": ["Pentane, 2-methyl-", "G2MP2", "-236.529269"]},
+                        {"id": 3, "value": ["Pentane, 3-methyl-", "G1", "-236.523934"]},
+                        {"id": 4, "value": ["Pentane, 3-methyl-", "G2MP2", "-236.528300"]}
+                    ],
+                    "footers": "e.g. analysis about the table result",
+                    "clickable": [
+                        {"id": 1, "index": 2, "dataContent": "sample long string (read a file and parse in the content into this field)" },
+                        {"id": 2, "index": 2, "dataContent": "sample long string (read a file and parse in the content into this field)" },
+                        {"id": 3, "index": 2, "dataContent": "sample long string (read a file and parse in the content into this field)" },
+                        {"id": 4, "index": 2, "dataContent": "sample long string (read a file and parse in the content into this field)" }
+                    ]    
+                },
+                {
+                    "tableName": "Vibrational frequency",
+                    "headers":[[
+                        {"label": "name", "span": 1},
+                        {"label": "stage", "span": 3}
+                    ],[
+                        {"label": "", "span": 1},
+                        {"label": "1", "span": 1}
+                        {"label": "2", "span": 1},
+                        {"label": "2", "span": 1}
+                    ]],
+                    "headersDetail":{
+                        "name": 1,
+                        "stage": 3
+                    },
+                    "rows": [
+                        {"id": 1, "value": ["name1", "5", "15", "25"]},
+                        {"id": 2, "value": ["name2", "5", "15", "25"]}
+                    ],
+                    "footers": "e.g. analysis about the table result",
+                    "clickable": [
+                        {"id": 1, "index": 1, "dataContent": "sample long string (read a file and parse in the content into this field)" },
+                        {"id": 1, "index": 2, "dataContent": "sample long string (read a file and parse in the content into this field)" },
+                        {"id": 1, "index": 3, "dataContent": "sample long string (read a file and parse in the content into this field)" },
+                        {"id": 2, "index": 1, "dataContent": "sample long string (read a file and parse in the content into this field)" },
+                        {"id": 2, "index": 2, "dataContent": "sample long string (read a file and parse in the content into this field)" },
+                        {"id": 2, "index": 3, "dataContent": "sample long string (read a file and parse in the content into this field)" }
+                    ]
+                }
+
+            ]
+        }
+    }
+}
