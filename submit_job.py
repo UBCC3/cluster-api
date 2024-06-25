@@ -2,9 +2,20 @@ import json
 import subprocess
 import os
 from .util import clean_up
+
+
 # TODO: Add S3 Upload
-# TODO: Add clean up scripts
-def write_sbatch_script(job_name, command):
+# TODO: Modify code for Psi4 and QCEngine
+def write_sbatch_script(job_name):
+    """
+    Sets up a directory with the job_name as its name.
+    Creates an sbatch script to be run.
+
+    Args:
+    - A string that has the name of the job which will be used as dir name.
+    
+    Returns: None
+    """
     try:  
         os.mkdir(job_name)  
     except OSError as error:  
@@ -16,12 +27,21 @@ def write_sbatch_script(job_name, command):
         #SBATCH --output={job_name}.out
         #SBATCH --error={job_name}.err
         
-        load module psi4
+        echo "Hello"
 
 
 
         ''')
+
+
 def submit_sbatch_script(script_path):
+    """
+    Submits the job to SLURM via sbatch
+
+    Args: The path to the submit_job bash file
+
+    Returns: None
+    """
     result = subprocess.run(["sbatch", script_path  + "/submit_job.sh"], capture_output=True, text=True)
     print(result)
     try:
@@ -35,7 +55,6 @@ def submit_sbatch_script(script_path):
         print(clean_up_result)
         raise Exception
 
-# NOTE: Input JSON cannot have any spaces in it
 def submit_job(job_input_data: dict) -> None:
     job_sql_id = job_input_data["id"]
     job_basis_set = job_input_data["basisSet"]

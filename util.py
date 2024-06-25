@@ -3,7 +3,14 @@ import shutil
 
 
 
-def get_slurm_id(db_job_id):
+def get_slurm_id(db_job_id) -> str:
+    """
+    Gets the ID given by slurm of the job
+
+    Args: a string with the id given to the job by the db
+
+    Returns: a string with the id given to the job by slurm
+    """
     current_path = os.path.join("./"+db_job_id)
     slurm_job_id = ""
     try:
