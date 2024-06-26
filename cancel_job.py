@@ -17,6 +17,6 @@ def cancel_job(job_input_data) -> bool:
     ]
     subprocess.run(cancel_command, capture_output=True, text=True)
     if clean_up(current_path):
-        print("SUCCESS")
+        print("{'status':'SUCCESS'}")
     else:
         raise Exception("FAILED")

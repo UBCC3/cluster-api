@@ -53,7 +53,7 @@ def submit_sbatch_script(script_path):
         print(clean_up_result)
         raise Exception
     else:
-        print("SUCCESS")
+        print("{'status':'SUCCESS'}")
 
 def submit_job(job_input_data: dict) -> None:
     job_sql_id = job_input_data["id"]
