@@ -2,6 +2,7 @@ import sys
 import json
 from submit_job import submit_job
 from cancel_job import cancel_job
+root_dir = "."
 if __name__ == "__main__":
     raw_json = input()
     try:

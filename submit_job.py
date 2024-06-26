@@ -2,7 +2,7 @@ import json
 import subprocess
 import os
 from .util import clean_up
-
+from main import root_dir
 
 # TODO: Add S3 Upload
 # TODO: Modify code for Psi4 and QCEngine
@@ -16,17 +16,16 @@ def write_sbatch_script(job_name):
     
     Returns: None
     """
-    try:  
-        os.mkdir(job_name)  
-    except OSError as error:  
-        print(error) 
-    cur_path = os.path.join("./"+job_name)
+    try:
+        os.mkdir(job_name)
+    except OSError as error:
+        print(error)
+    cur_path = os.path.join(root_dir+job_name)
     with open(cur_path + "/submit_job.sh", "w") as file:
         file.write(f'''#!/bin/bash
         #SBATCH --job-name={job_name}
         #SBATCH --output={job_name}.out
         #SBATCH --error={job_name}.err
-        
         echo "Hello"
 
 
@@ -43,17 +42,18 @@ def submit_sbatch_script(script_path):
     Returns: None
     """
     result = subprocess.run(["sbatch", script_path  + "/submit_job.sh"], capture_output=True, text=True)
-    print(result)
     try:
         slurm_job_id = (result.stdout.split()[-1])
-        current_path = os.path.join("./"+script_path)
+        current_path = os.path.join(root_dir, script_path)
         with open(current_path + "/slurm_id.txt", "w") as file:
             file.write(slurm_job_id)
     except:
-        print("JOB SUBMIT ERROR", result.stderr)
+        print("FAILED", result.stderr)
         clean_up_result = clean_up(script_path)
         print(clean_up_result)
         raise Exception
+    else:
+        print("SUCCESS")
 
 def submit_job(job_input_data: dict) -> None:
     job_sql_id = job_input_data["id"]
@@ -62,8 +62,8 @@ def submit_job(job_input_data: dict) -> None:
     job_wave_theory = job_input_data["waveTheory"]
     job_calculation_type = job_input_data["calculation"]
     job_solvent_effects = job_input_data["solventEffects"]
-    script_path = "./" + job_sql_id
-    write_sbatch_script(script_path, 'echo "test"')
+    script_path = os.path.join(root_dir, job_sql_id)
+    write_sbatch_script(job_sql_id)
     submit_sbatch_script(script_path)
 
 
