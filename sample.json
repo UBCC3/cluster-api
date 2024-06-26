@@ -63,7 +63,6 @@
                         {"id": 2, "index": 3, "dataContent": "sample long string (read a file and parse in the content into this field)" }
                     ]
                 }
-
             ]
         }
     }
