@@ -1,6 +1,8 @@
 import logging
 import os
 
+import shutil
+
 from main import root_dir
 
 # Configure logging
@@ -25,3 +27,17 @@ def get_slurm_id(db_job_id) -> str:
         return slurm_job_id
     except FileNotFoundError as error:
         log_error(error)
+    
+def clean_up(current_path):
+    """
+    Deletes a job's directory
+    Args:
+    script_path: a str with the name of the job which will be used as directory name
+    Returns: true if success, false otherwise
+    """
+    try:
+        shutil.rmtree(current_path)
+    except:
+        return False
+    else:
+        return True
