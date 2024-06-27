@@ -1,13 +1,20 @@
-import base64
+import os
 import json
 import subprocess
-import sys
 import zipfile
+
+from main import root_dir
+from util import get_slurm_id, log_error
+
+def check_status(jobs_dict):
+    for key in jobs_dict:
+        jobs_dict[key] = check_job_queue(key)
+    print(json.dumps(jobs_dict))
 
 # check if the job is still in the queue or not
 def check_job_queue(db_job_id):
     try:
-        slurm_job_id =  fetch_slurm_job_id(db_job_id)
+        slurm_job_id = get_slurm_id(db_job_id)
         command = ["squeue", "--jobs", slurm_job_id]
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         # if the job is still pending or in progress
@@ -17,24 +24,11 @@ def check_job_queue(db_job_id):
         else:
             return check_job_status(db_job_id, slurm_job_id)
     except subprocess.CalledProcessError as e:
-        return f'Error: {e.stderr}'
-    except Exception as e:
-        return str(e)
-
-# fetch the job id in the slurm system using the the value of job id in the database
-def fetch_slurm_job_id(db_job_id):
-    # TODO: update "slurm_id" with the actual file name that stores the job id in slurm system
-    file_path = f'scratch/ubchemica/{db_job_id}/slurm_id.txt'
-    command = ["cat", file_path]
-    try:
-        result = subprocess.run(command, capture_output=True, text=True, check=True)
-        return result.stdout.strip()
-    except subprocess.CalledProcessError as e:
-        raise Exception(f'Error: {e.stderr}')
+        log_error(f'Error: {e.stderr}')
         
 # check the specifc job status when the job is not in the queue
 def check_job_status(db_job_id, slurm_job_id):
-    command = ["sacct", "--jobs", slurm_job_id, "--format=JobID,State,DerivedExitCode,Comment"]
+    command = ["sacct", "--jobs", slurm_job_id, "--format=JobID,State,DerivedExitCode,Comment,Start,End"]
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         # Sample result.stdout
@@ -49,18 +43,20 @@ def check_job_status(db_job_id, slurm_job_id):
         state_index = header.index("State")
         derived_exit_code_index = header.index("DerivedExitCode")
         comment_index = header.index("Comment") if "Comment" in header else None
+        start_index = header.index("Start")
+        end_index = header.index("End")
+        
         for line in lines[2:]:
             parts = line.split()
             if parts[job_index] == str(slurm_job_id):
                 state = parts[state_index]
                 derived_exit_code = parts[derived_exit_code_index]
                 if state == "COMPLETED" and derived_exit_code == "0:0":
+                    start_time = parts[start_index]
+                    end_time = parts[end_index]
                     # TODO: process the result files into the one will be used in the platform
-                    # TODO: update with the actual file path
-                    result_path = f'/ubchemica/{db_job_id}/'
-                    output_zip_path = f'/ubchemica/archive/{db_job_id}.zip'
-                    zip_output_files(result_path, output_zip_path)
-                    return 1
+                    zip_output_files(db_job_id)
+                    return {"state": state, "start_time": start_time, "end_time": end_time}
                 else:
                     # Common status:
                     # CANCELLED: Job was cancelled by the user or a sysadmin
@@ -68,31 +64,14 @@ def check_job_status(db_job_id, slurm_job_id):
                     # OUT_OF_MEMORY: Job was killed for using too much memory
                     # TIMEOUT: Job was killed for exceeding its time limit
                     comment = parts[comment_index] if comment_index is not None else "No additional info"
-                    return json.dumps({"exitcode": derived_exit_code, "reason": comment})
+                    return {"state": state, "exitcode": derived_exit_code, "reason": comment}
     except subprocess.CalledProcessError as e:
-        raise Exception(f'Error: {e.stderr}')
+        log_error(f'Error: {e.stderr}')
     
-def zip_output_files(file_path, output_zip_path):
+def zip_output_files(db_job_id):
+    result_path = os.path.join(root_dir, db_job_id)
+    output_zip_path = os.path.join(root_dir, "archive", f'{db_job_id}.zip')
     with zipfile.ZipFile(output_zip_path, 'w') as zip:
-        for file in file_path:
+        for file in result_path:
             zip.write(file)
-    
-if __name__ == "__main__":
-    """
-    Sample input:
-    {
-        "jobid1": 0,
-        "jobid2": 0,
-        "jobid3": 0
-    }
-    for each value:
-    - 0 indicate the job is still pending or inprogress
-    - 1 indicate the job is completed
-    - ...
-    """
-    input_data = json.load(sys.stdin)
-    for key in input_data:
-        input_data[key] = check_job_queue(key)
-    encoded_json_data = base64.b64encode(json.dumps(input_data).encode()).decode('utf-8')
-    print(encoded_json_data)
     
