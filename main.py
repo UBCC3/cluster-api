@@ -8,13 +8,14 @@ if __name__ == "__main__":
     try:
         job_input_data = json.loads(raw_json)
         action = job_input_data["action"]
+        param = job_input_data["parameters"]
     except:
         print("Error parsing JSON")
     match action:
         case "submit":
-            submit_job(job_input_data["parameters"])
+            submit_job(param)
         case "cancel":
-            cancel_job(job_input_data["parameters"])
+            cancel_job(param)
         case "fetch":
             pass
         case "check":

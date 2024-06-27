@@ -15,7 +15,7 @@ def get_slurm_id(db_job_id) -> str:
     slurm_job_id = ""
     try:
         with open(current_path + "/slurm_id.txt", "r") as file:
-            slurm_job_id = file.readLine()
+            slurm_job_id = file.readline()
     except FileNotFoundError as error:
         raise error
     else:
