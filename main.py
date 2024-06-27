@@ -2,6 +2,7 @@ import json
 
 from cancel_job import cancel_job
 from check_status import check_status
+from upload_result import upload_result
 from submit_job import submit_job
 from util import log_error
 
@@ -20,8 +21,8 @@ if __name__ == "__main__":
             submit_job(parameters)
         case "cancel":
             cancel_job(parameters)
-        case "fetch":
-            pass
+        case "upload":
+            upload_result(parameters)
         case "check":
             check_status(parameters)
         case _:
