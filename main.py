@@ -12,7 +12,7 @@ if __name__ == "__main__":
         print("Error parsing JSON")
     match action:
         case "submit":
-            submit_job(job_input_data)
+            submit_job(job_input_data["parameters"])
         case "cancel":
             cancel_job(job_input_data)
         case "fetch":
