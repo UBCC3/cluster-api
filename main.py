@@ -14,7 +14,7 @@ if __name__ == "__main__":
         case "submit":
             submit_job(job_input_data["parameters"])
         case "cancel":
-            cancel_job(job_input_data)
+            cancel_job(job_input_data["parameters"])
         case "fetch":
             pass
         case "check":
