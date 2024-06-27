@@ -64,7 +64,7 @@ def check_job_status(db_job_id, slurm_job_id):
                     # OUT_OF_MEMORY: Job was killed for using too much memory
                     # TIMEOUT: Job was killed for exceeding its time limit
                     comment = parts[comment_index] if comment_index is not None else "No additional info"
-                    return {"state": state, "exitcode": derived_exit_code, "reason": comment}
+                    return {"state": state, "start_time": start_time, "end_time": end_time, "exitcode": derived_exit_code, "reason": comment}
     except subprocess.CalledProcessError as e:
         log_error(f'Error: {e.stderr}')
     
