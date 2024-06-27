@@ -1,24 +1,33 @@
-import sys
 import json
-from submit_job import submit_job
+
 from cancel_job import cancel_job
+from check_status import check_status
+from clean_result import clean_result
+from upload_result import upload_result
+from submit_job import submit_job
+from util import log_error
+
 root_dir = "."
+
 if __name__ == "__main__":
     raw_json = input()
     try:
         job_input_data = json.loads(raw_json)
         action = job_input_data["action"]
-        param = job_input_data["parameters"]
+        parameters = job_input_data["parameters"]
     except:
-        print("Error parsing JSON")
+        log_error("Error parsing JSON")
     match action:
         case "submit":
-            submit_job(param)
+            submit_job(parameters)
         case "cancel":
-            cancel_job(param)
-        case "fetch":
-            pass
+            cancel_job(parameters)
+        case "upload":
+            upload_result(parameters)
         case "check":
-            pass
+            check_status(parameters)
+        case "clean":
+            clean_result(parameters)
         case _:
-            raise Exception("Invalid action word: {action}") 
+            log_error("Invalid action word: {action}")
+            
