@@ -1,19 +1,22 @@
 import subprocess
 import os
-def find_job_id(job_name):
-    current_path = os.path.join("./"+job_name)
-    slurm_job_id = ""
-    try:
-        with open(current_path + "/slurm_id.txt", "r") as file:
-            slurm_job_id = file.readLine()
-            cancel_command = [
-                "scancel", slurm_job_id
-            ]
-        subprocess.run(cancel_command, capture_output=True, text=True)
-        subprocess.run(["sbatch", current_path + "/clean_up.sh"],capture_output=True, text=True)
-    except FileNotFoundError as error:
-        raise error
-    return True
-if __name__ == "__main__":
-    db_job_id = input()
-    find_job_id(db_job_id)
+from .util import get_slurm_id, clean_up
+from main import root_dir
+def cancel_job(job_input_data) -> bool:
+    """
+    Cancels a job queued/currently running
+
+    Args: a JSON with all the job input data
+
+    Returns: True if job was successfully cancelled, False otherwise
+    """
+    slurm_job_id = get_slurm_id(job_input_data["id"])
+    current_path = os.path.join(root_dir+job_input_data["id"])
+    cancel_command = [
+        "scancel", slurm_job_id
+    ]
+    subprocess.run(cancel_command, capture_output=True, text=True)
+    if clean_up(current_path):
+        print("{'status':'SUCCESS'}")
+    else:
+        raise Exception("FAILED")
