@@ -20,9 +20,9 @@ if __name__ == "__main__":
         log_error("Error parsing JSON")
     match action:
         case "submit":
-            submit_job(parameters)
+            print(submit_job(parameters))
         case "cancel":
-            cancel_job(parameters)
+            print(cancel_job(parameters))
         case "upload":
             upload_result(parameters)
         case "check":

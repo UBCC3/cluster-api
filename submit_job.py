@@ -48,12 +48,11 @@ def submit_sbatch_script(script_path):
         with open(current_path + "/slurm_id.txt", "w") as file:
             file.write(slurm_job_id)
     except:
-        print("FAILED", result.stderr)
         clean_up_result = clean_up(script_path)
-        print(clean_up_result)
-        raise Exception
+        return "{'status':'FAILURE'}"
+        
     else:
-        print("{'status':'SUCCESS'}")
+        return "{'status':'SUCCESS'}"
 
 def submit_job(job_input_data: dict) -> None:
     job_sql_id = job_input_data["id"]

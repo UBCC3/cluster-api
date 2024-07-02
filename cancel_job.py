@@ -14,8 +14,8 @@ def cancel_job(job_input_data) -> bool:
     cancel_command = [
         "scancel", slurm_job_id
     ]
-    subprocess.run(cancel_command, capture_output=True, text=True)
-    if clean_up(job_dir):
-        print("{'status':'SUCCESS'}")
+    cancel_result = subprocess.run(cancel_command, capture_output=True, text=True)
+    if not cancel_result.stderr:
+        return "{'status':'SUCCESS'}"
     else:
-        raise Exception("FAILED")
+        return "{'status':'FAILURE'}"
