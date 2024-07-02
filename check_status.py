@@ -54,8 +54,6 @@ def check_job_status(db_job_id, slurm_job_id):
                 if state == "COMPLETED" and derived_exit_code == "0:0":
                     start_time = parts[start_index]
                     end_time = parts[end_index]
-                    # TODO: process the result files into the one will be used in the platform
-                    zip_output_files(db_job_id)
                     return {"state": state, "start_time": start_time, "end_time": end_time}
                 else:
                     # Common status:
@@ -67,11 +65,4 @@ def check_job_status(db_job_id, slurm_job_id):
                     return {"state": state, "start_time": start_time, "end_time": end_time, "exitcode": derived_exit_code, "reason": comment}
     except subprocess.CalledProcessError as e:
         log_error(f'Error: {e.stderr}')
-    
-def zip_output_files(db_job_id):
-    result_path = os.path.join(root_dir, db_job_id)
-    output_zip_path = os.path.join(root_dir, "archive", f'{db_job_id}.zip')
-    with zipfile.ZipFile(output_zip_path, 'w') as zip:
-        for file in result_path:
-            zip.write(file)
     
