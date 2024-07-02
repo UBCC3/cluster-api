@@ -15,6 +15,7 @@ if __name__ == "__main__":
         job_input_data = json.loads(raw_json)
         action = job_input_data["action"]
         parameters = job_input_data["parameters"]
+        parameters["root_dir"] = root_dir
     except:
         log_error("Error parsing JSON")
     match action:

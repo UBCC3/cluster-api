@@ -20,8 +20,8 @@ def write_sbatch_script(job_name):
         os.mkdir(job_name)
     except OSError as error:
         print(error)
-    cur_path = os.path.join(root_dir+job_name)
-    with open(cur_path + "/submit_job.sh", "w") as file:
+    job_dir = os.path.join(root_dir+job_name)
+    with open(job_dir + "/submit_job.sh", "w") as file:
         file.write(f'''#!/bin/bash
         #SBATCH --job-name={job_name}
         #SBATCH --output={job_name}.out
