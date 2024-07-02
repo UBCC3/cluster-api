@@ -25,7 +25,7 @@ if __name__ == "__main__":
         case "upload":
             upload_result(parameters, root_dir)
         case "check":
-            check_status(parameters, root_dir)
+            check_status(parameters)
         case "clean":
             clean_result(parameters, root_dir)
         case _:
