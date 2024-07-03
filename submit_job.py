@@ -2,7 +2,6 @@ import json
 import subprocess
 import os
 from .util import clean_up
-from main import root_dir
 
 # TODO: Add S3 Upload
 # TODO: Modify code for Psi4 and QCEngine
