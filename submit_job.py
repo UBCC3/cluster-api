@@ -5,7 +5,7 @@ from .util import clean_up
 
 # TODO: Add S3 Upload
 # TODO: Modify code for Psi4 and QCEngine
-def write_sbatch_script(job_name):
+def write_sbatch_script(job_name, root_dir):
     """
     Sets up a directory with the job_name as its name.
     Creates an sbatch script to be run.
@@ -53,7 +53,7 @@ def submit_sbatch_script(script_path):
     else:
         return "{'status':'SUCCESS'}"
 
-def submit_job(job_input_data: dict) -> None:
+def submit_job(job_input_data: dict, root_dir = str) -> None:
     db_job_id = job_input_data["id"]
     job_basis_set = job_input_data["basisSet"]
     job_theory = job_input_data["theory"]
@@ -61,7 +61,7 @@ def submit_job(job_input_data: dict) -> None:
     job_calculation_type = job_input_data["calculation"]
     job_solvent_effects = job_input_data["solventEffects"]
     script_path = os.path.join(root_dir, db_job_id)
-    write_sbatch_script(db_job_id)
+    write_sbatch_script(db_job_id, root_dir)
     submit_sbatch_script(script_path)
 
 
