@@ -32,7 +32,7 @@ def write_sbatch_script(job_name, root_dir):
         ''')
 
 
-def submit_sbatch_script(script_path):
+def submit_sbatch_script(script_path, root_dir):
     """
     Submits the job to SLURM via sbatch
 
@@ -63,6 +63,6 @@ def submit_job(job_input_data: dict) -> None:
     job_solvent_effects = job_input_data["solventEffects"]
     script_path = os.path.join(root_dir, db_job_id)
     write_sbatch_script(db_job_id, root_dir)
-    submit_sbatch_script(script_path)
+    submit_sbatch_script(script_path, root_dir)
 
 
