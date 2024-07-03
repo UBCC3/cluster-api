@@ -1,6 +1,6 @@
 import logging
 import os
-
+import subprocess
 import shutil
 
 from main import root_dir
@@ -41,3 +41,20 @@ def clean_up(current_path):
         return False
     else:
         return True
+
+def is_job_in_queue(slurm_job_id) -> bool:
+    """
+    Checks if a job is still in the slurm queue
+    Args:
+    db_job_id: a str with the name of the job given by slurm
+    Returns: true if job is in squeue, false otherwise
+    """
+    ssh_command = [
+        "squeue", "--jobs", slurm_job_id
+    ]
+    squeue_result = subprocess.run(ssh_command, capture_output=True, text=True)
+
+    if squeue_result.stdout:
+        return True
+    else:
+        return False

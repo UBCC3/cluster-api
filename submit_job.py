@@ -55,14 +55,14 @@ def submit_sbatch_script(script_path):
         return "{'status':'SUCCESS'}"
 
 def submit_job(job_input_data: dict) -> None:
-    job_sql_id = job_input_data["id"]
+    db_job_id = job_input_data["id"]
     job_basis_set = job_input_data["basisSet"]
     job_theory = job_input_data["theory"]
     job_wave_theory = job_input_data["waveTheory"]
     job_calculation_type = job_input_data["calculation"]
     job_solvent_effects = job_input_data["solventEffects"]
-    script_path = os.path.join(root_dir, job_sql_id)
-    write_sbatch_script(job_sql_id)
+    script_path = os.path.join(root_dir, db_job_id)
+    write_sbatch_script(db_job_id)
     submit_sbatch_script(script_path)
 
 
