@@ -53,8 +53,9 @@ def submit_sbatch_script(script_path):
     else:
         return "{'status':'SUCCESS'}"
 
-def submit_job(job_input_data: dict, root_dir = str) -> None:
+def submit_job(job_input_data: dict) -> None:
     db_job_id = job_input_data["id"]
+    root_dir = job_input_data["root_dir"]
     job_basis_set = job_input_data["basisSet"]
     job_theory = job_input_data["theory"]
     job_wave_theory = job_input_data["waveTheory"]
