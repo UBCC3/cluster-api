@@ -16,7 +16,7 @@ def upload_result(parameters):
     Output:
         - A dictionary that contains the HTTP status code of the upload request
     """
-    root_dir = parameters[root_dir]
+    root_dir = parameters["root_dir"]
     result_type = ""
     if parameters["Type"] == "zip":
         result_type = ".zip"

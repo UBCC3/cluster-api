@@ -12,8 +12,8 @@ def check_status(parameters):
     Output:
         -  a dictionary where the key is the db_job_id, and the value is 0 (nothing change for the job) or a dictionary with updated job information
     """
-    jobs_dict = parameters[jobs_dict]
-    root_dir = parameters[root_dir]
+    jobs_dict = parameters["jobs_dict"]
+    root_dir = parameters["root_dir"]
     try:   
         for key, value in jobs_dict.items():
             jobs_dict[key] = check_job_queue(key, value)
