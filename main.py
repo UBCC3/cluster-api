@@ -18,17 +18,19 @@ if __name__ == "__main__":
         parameters["root_dir"] = root_dir
     except:
         log_error("Error parsing JSON", root_dir)
+        # TODO: return something to the backend
     match action:
         case "submit":
-            submit_job(parameters)
+            print(json.dump(submit_job(parameters)))
         case "cancel":
-            cancel_job(parameters)
+            print(json.dump(cancel_job(parameters)))
         case "upload":
-            upload_result(parameters)
+            print(json.dump(upload_result(parameters)))
         case "check":
-            check_status(parameters)
+            print(json.dump(check_status(parameters)))
         case "clean":
-            clean_result(parameters)
+            print(json.dump(clean_result(parameters)))
         case _:
             log_error("Invalid action word: {action}", root_dir)
+            # TODO: return something to the backend
             
