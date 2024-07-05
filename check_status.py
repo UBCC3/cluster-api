@@ -1,7 +1,4 @@
-import os
-import json
 import subprocess
-import zipfile
 
 from util import get_slurm_id, log_error
 
@@ -31,7 +28,6 @@ def check_job_queue(db_job_id, db_job_status, root_dir):
     Args:
         db_job_id (str): job ID in the database
         db_job_status (str): current status in the database ('SUBMITTED' or 'RUNNING')
-        root_dir (str): root directory for the cluster
     Returns:
         0 (nothing change for the job) or a dictionary with additional job information
     """
@@ -44,13 +40,17 @@ def check_job_queue(db_job_id, db_job_status, root_dir):
             job_info = lines[1].split()
             if job_info[0] == "RUNNING" and db_job_status == "SUBMITTED":
                 return {"status": "RUNNING", "started": job_info[1]}
+        if result.stdout:  # if the job is still pending or running
+            lines = result.stdout.splitlines()
+            job_info = lines[1].split()
+            if job_info[0] == "RUNNING" and db_job_status == "SUBMITTED":
+                return {"status": "RUNNING", "started": job_info[1]}
             return 0
         else: # if the job is completed or failed
-            check_job_status(slurm_job_id)    
+            check_job_status(slurm_job_id) 
     except subprocess.CalledProcessError as e:
-        raise Exception(f'Error running squeue for job ID {db_job_id}: {e.stderr}')
+        raise Exception(f'Error running squeue for job ID {db_job_id}: {e.stderr}')       
         
-# check the specifc job status when the job is not in the queue
 def check_job_status(slurm_job_id):
     """
     Check the job information when the job is not in the queue (CANCELLED, FAILED, OUT_OF_MEMORY, TIMEOUT, ...)

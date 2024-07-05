@@ -43,8 +43,8 @@ def submit_sbatch_script(script_path, root_dir):
     result = subprocess.run(["sbatch", script_path  + "/submit_job.sh"], capture_output=True, text=True)
     try:
         slurm_job_id = (result.stdout.split()[-1])
-        current_path = os.path.join(root_dir, script_path)
-        with open(current_path + "/slurm_id.txt", "w") as file:
+        job_dir = os.path.join(root_dir, script_path)
+        with open(job_dir + "/slurm_id.txt", "w") as file:
             file.write(slurm_job_id)
     except:
         clean_up_result = clean_up(script_path)

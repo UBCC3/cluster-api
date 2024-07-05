@@ -17,7 +17,8 @@ if __name__ == "__main__":
         parameters = job_input_data["parameters"]
         parameters["root_dir"] = root_dir
     except:
-        log_error("Error parsing JSON")
+        log_error("Error parsing JSON", root_dir)
+        # TODO: return something to the backend
     match action:
         case "submit":
             print(json.dump(submit_job(parameters)))
@@ -30,5 +31,6 @@ if __name__ == "__main__":
         case "clean":
             print(json.dump(clean_result(parameters)))
         case _:
-            log_error("Invalid action word: {action}")
+            log_error("Invalid action word: {action}", root_dir)
+            # TODO: return something to the backend
             
