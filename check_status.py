@@ -5,12 +5,12 @@ from util import get_slurm_id, log_error
 def check_status(parameters):
     """
     Check the status of jobs whose status is pending or in progress in the database 
-    Input: 
-        - parameters: a dictionary that contains:
+    Args:
+        parameters: a dictionary that contains:
             - jobs_dict: a dictionary where the key is the db_job_id, and the value is the db_job_status
-            - root_dir: the root directory path
-    Output:
-        -  a dictionary where the key is the db_job_id, and the value is 0 (nothing change for the job) or a dictionary with updated job information
+            - root_dir (str): the root directory path
+    Returns:
+        a dictionary where the key is the db_job_id, and the value is 0 (nothing change for the job) or a dictionary with updated job information
     """
     jobs_dict = parameters["jobs_dict"]
     root_dir = parameters["root_dir"]
@@ -25,11 +25,11 @@ def check_status(parameters):
 def check_job_queue(db_job_id, db_job_status):
     """
     Check if the job is still in the queue or not
-    Input:
-        - db_job_id: job ID in the database
-        - db_job_status: current status in the database ('SUBMITTED' or 'RUNNING')
-    output: 
-        - 0 (nothing change for the job) or a dictionary with additional job information
+    Args:
+        db_job_id (str): job ID in the database
+        db_job_status (str): current status in the database ('SUBMITTED' or 'RUNNING')
+    Returns:
+        0 (nothing change for the job) or a dictionary with additional job information
     """
     try:
         slurm_job_id = get_slurm_id(db_job_id)
@@ -49,10 +49,10 @@ def check_job_queue(db_job_id, db_job_status):
 def check_job_status(slurm_job_id):
     """
     Check the job information when the job is not in the queue (CANCELLED, FAILED, OUT_OF_MEMORY, TIMEOUT, ...)
-    Input:
-        - slurm_job_id: job ID in the Slurm system
-    Output: 
-        - a dictionary with additional job information
+    Args:
+        slurm_job_id (str): job ID in the Slurm system
+    Returns: 
+        a dictionary with additional job information
     """
     command = ["sacct", "--jobs", slurm_job_id, "--format=JobID,State,DerivedExitCode,Comment,Start,End"]
     try:

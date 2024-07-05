@@ -23,7 +23,8 @@ def upload_result(parameters):
     elif parameters["Type"] == "json":
         result_type = ".json"
     else:
-        log_error(f'Invalid Type word: {parameters["Type"]}')
+        log_error(f'Invalid Type word: {parameters["Type"]}', root_dir)
+        # TODO: return something to the backend
     db_job_id = parameters["JobID"]
     presigned_response = parameters["PresignedResponse"]
     job_dir = os.path.join(root_dir, db_job_id, f'{db_job_id}{result_type}')
@@ -35,8 +36,8 @@ def upload_result(parameters):
                                           files=files)
             return {"status_code": http_response.status_code}
     except requests.RequestException as e:
-        log_error(f'HTTP request fail with {str(e)}')
+        log_error(f'HTTP request fail with {str(e)}', root_dir)
         # TODO: return something to the backend
     except Exception as e:
-        log_error(f'Error {str(e)}')
+        log_error(f'Error {str(e)}', root_dir)
         # TODO: return something to the backend

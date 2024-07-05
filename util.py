@@ -1,17 +1,19 @@
-import logging
+import datetime
 import os
 
 import shutil
 
-from main import root_dir
-
-# Configure logging
-log_file_path = os.path.join(root_dir, 'error_log.log')
-logging.basicConfig(filename=log_file_path, level=logging.ERROR, format='%(asctime)s:%(message)s')
-
-def log_error(error_message):
-    """Logs an error message using the logging module."""
-    logging.error(error_message)
+def log_error(error_message, root_dir):
+    """
+    Logs an error message to the text file with the current timestamp
+    Args:
+        error_message (str): The error message to log.
+        root_dir (str): the root directory path
+    """
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    error_file_dir = os.path.join(root_dir, 'error_log.txt')
+    with open(error_file_dir, "a") as file:
+        file.write(f"{current_time}: {error_message}\n")
     
 def get_slurm_id(db_job_id) -> str:
     """

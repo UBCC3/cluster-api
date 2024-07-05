@@ -1,6 +1,5 @@
 import os
 
-from main import root_dir
 from util import clean_up
 
 def clean_result(parameters):
