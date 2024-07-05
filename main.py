@@ -21,15 +21,15 @@ if __name__ == "__main__":
         # TODO: return something to the backend
     match action:
         case "submit":
-            print(submit_job(parameters))
+            print(json.dump(submit_job(parameters)))
         case "cancel":
-            print(cancel_job(parameters))
+            print(json.dump(cancel_job(parameters)))
         case "upload":
-            print(upload_result(parameters))
+            print(json.dump(upload_result(parameters)))
         case "check":
-            print(check_status(parameters))
+            print(json.dump(check_status(parameters)))
         case "clean":
-            print(clean_result(parameters))
+            print(json.dump(clean_result(parameters)))
         case _:
             log_error("Invalid action word: {action}")
             # TODO: return something to the backend
