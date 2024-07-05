@@ -27,7 +27,7 @@ def check_job_queue(db_job_id, db_job_status):
     Check if the job is still in the queue or not
     Input:
         - db_job_id: job ID in the database
-        - db_job_status: current status in the database ('submitted' or 'running')
+        - db_job_status: current status in the database ('SUBMITTED' or 'RUNNING')
     output: 
         - 0 (nothing change for the job) or a dictionary with additional job information
     """
@@ -38,8 +38,8 @@ def check_job_queue(db_job_id, db_job_status):
         if result.stdout:  # if the job is still pending or running
             lines = result.stdout.splitlines()
             job_info = lines[1].split()
-            if job_info[0] == "RUNNING" and db_job_status == "submitted":
-                return {"status": "running", "started": job_info[1]}
+            if job_info[0] == "RUNNING" and db_job_status == "SUBMITTED":
+                return {"status": "RUNNING", "started": job_info[1]}
             return 0
         else: # if the job is completed or failed
             check_job_status(slurm_job_id)    
@@ -81,10 +81,10 @@ def check_job_status(slurm_job_id):
                 start_time = parts[start_index]
                 end_time = parts[end_index]
                 if state == "COMPLETED" and derived_exit_code == "0:0":
-                    return {"status": "completed", "started": start_time, "finished": end_time}
+                    return {"status": "COMPLETED", "started": start_time, "finished": end_time}
                 else:
                     comment = parts[comment_index] if comment_index is not None else "No additional info"
-                    return {"status": "failed", "started": start_time, "finished": end_time, "error_message": comment}
+                    return {"status": "FAILED", "started": start_time, "finished": end_time, "error_message": comment}
     except subprocess.CalledProcessError as e:
         raise Exception(f'Error running sacct: {e.stderr}')
     
