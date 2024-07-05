@@ -3,8 +3,11 @@ import os
 from util import clean_up
 
 def clean_result(parameters):
-    db_job_id = parameters["JobID"]
+    db_job_id = parameters["id"]
     root_dir = parameters["root_dir"]
     file_path = os.path.join(root_dir, db_job_id)
-    clean_up(file_path)
+    if clean_up(file_path):
+        return "{'status':'SUCCESS'}"
+    else:
+        return "{'status':'FAILURE'}"
     

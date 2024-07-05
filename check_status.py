@@ -16,13 +16,13 @@ def check_status(parameters):
     root_dir = parameters["root_dir"]
     try:   
         for key, value in jobs_dict.items():
-            jobs_dict[key] = check_job_queue(key, value)
+            jobs_dict[key] = check_job_queue(key, value, root_dir)
         return jobs_dict
     except Exception as e:
         log_error(e, root_dir)  
         # TODO: return something to the backend
 
-def check_job_queue(db_job_id, db_job_status):
+def check_job_queue(db_job_id, db_job_status, root_dir):
     """
     Check if the job is still in the queue or not
     Args:
@@ -32,7 +32,7 @@ def check_job_queue(db_job_id, db_job_status):
         0 (nothing change for the job) or a dictionary with additional job information
     """
     try:
-        slurm_job_id = get_slurm_id(db_job_id)
+        slurm_job_id = get_slurm_id(db_job_id, root_dir)
         command = ["squeue", "--jobs", slurm_job_id, "--format=State,StartTime"]
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         if result.stdout:  # if the job is still pending or running
@@ -40,9 +40,14 @@ def check_job_queue(db_job_id, db_job_status):
             job_info = lines[1].split()
             if job_info[0] == "RUNNING" and db_job_status == "SUBMITTED":
                 return {"status": "RUNNING", "started": job_info[1]}
+        if result.stdout:  # if the job is still pending or running
+            lines = result.stdout.splitlines()
+            job_info = lines[1].split()
+            if job_info[0] == "RUNNING" and db_job_status == "SUBMITTED":
+                return {"status": "RUNNING", "started": job_info[1]}
             return 0
         else: # if the job is completed or failed
-            check_job_status(slurm_job_id)    
+            check_job_status(slurm_job_id) 
     except subprocess.CalledProcessError as e:
         raise Exception(f'Error running squeue for job ID {db_job_id}: {e.stderr}')       
         
