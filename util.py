@@ -28,7 +28,7 @@ def get_slurm_id(db_job_id, root_dir) -> str:
     except FileNotFoundError as error:
         log_error(error)
     
-def clean_up(current_path):
+def clean_up(job_dir):
     """
     Deletes a job's directory
     Args:
@@ -36,7 +36,7 @@ def clean_up(current_path):
     Returns: true if success, false otherwise
     """
     try:
-        shutil.rmtree(current_path)
+        shutil.rmtree(job_dir)
     except:
         return False
     else:
