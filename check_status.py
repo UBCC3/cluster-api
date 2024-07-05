@@ -31,6 +31,7 @@ def check_job_queue(db_job_id, db_job_status, root_dir):
     Args:
         db_job_id (str): job ID in the database
         db_job_status (str): current status in the database ('SUBMITTED' or 'RUNNING')
+        root_dir (str): root directory for the cluster
     Returns:
         0 (nothing change for the job) or a dictionary with additional job information
     """
