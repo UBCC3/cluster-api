@@ -11,7 +11,7 @@ def cancel_job(job_input_data) -> bool:
     """
     slurm_job_id = get_slurm_id(job_input_data["id"], job_input_data["root_dir"])
     if is_job_in_queue(slurm_job_id):
-        job_dir = os.path.join(job_input_data["root_dir"]+job_input_data["id"])
+        job_dir = os.path.join(job_input_data["root_dir"],job_input_data["id"])
         cancel_command = [
             "scancel", slurm_job_id
         ]
