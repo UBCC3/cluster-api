@@ -48,10 +48,10 @@ def submit_sbatch_script(script_path, root_dir):
             file.write(slurm_job_id)
     except:
         clean_up_result = clean_up(script_path)
-        return "{'status':'FAILURE'}"
+        return {'status':'FAILURE'}
         
     else:
-        return "{'status':'SUCCESS'}"
+        return {'status':'SUCCESS'}
 
 def submit_job(job_input_data: dict) -> None:
     db_job_id = job_input_data["id"]

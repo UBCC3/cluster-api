@@ -20,15 +20,15 @@ if __name__ == "__main__":
         log_error("Error parsing JSON")
     match action:
         case "submit":
-            print(submit_job(parameters, root_dir))
+            print(json.dump(submit_job(parameters)))
         case "cancel":
-            print(cancel_job(parameters, root_dir))
+            print(json.dump(cancel_job(parameters)))
         case "upload":
-            upload_result(parameters, root_dir)
+            print(json.dump(upload_result(parameters)))
         case "check":
-            check_status(parameters, root_dir)
+            print(json.dump(check_status(parameters)))
         case "clean":
-            clean_result(parameters, root_dir)
+            print(json.dump(clean_result(parameters)))
         case _:
             log_error("Invalid action word: {action}")
             
