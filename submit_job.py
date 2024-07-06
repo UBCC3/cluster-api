@@ -32,7 +32,7 @@ def write_sbatch_script(job_name, root_dir):
         ''')
 
 
-def submit_sbatch_script(script_path, root_dir):
+def submit_sbatch_script(job_dir, root_dir):
     """
     Submits the job to SLURM via sbatch
 
@@ -40,14 +40,13 @@ def submit_sbatch_script(script_path, root_dir):
 
     Returns: None
     """
-    result = subprocess.run(["sbatch", script_path  + "/submit_job.sh"], capture_output=True, text=True)
+    result = subprocess.run(["sbatch", job_dir  + "/submit_job.sh"], capture_output=True, text=True)
     try:
         slurm_job_id = (result.stdout.split()[-1])
-        job_dir = os.path.join(root_dir, script_path)
         with open(job_dir + "/slurm_id.txt", "w") as file:
             file.write(slurm_job_id)
     except:
-        clean_up_result = clean_up(script_path)
+        clean_up_result = clean_up(job_dir)
         return {'status':'FAILURE'}
         
     else:
@@ -61,8 +60,8 @@ def submit_job(job_input_data: dict) -> None:
     job_wave_theory = job_input_data["waveTheory"]
     job_calculation_type = job_input_data["calculation"]
     job_solvent_effects = job_input_data["solventEffects"]
-    script_path = os.path.join(root_dir, db_job_id)
+    job_dir = os.path.join(root_dir, db_job_id)
     write_sbatch_script(db_job_id, root_dir)
-    submit_sbatch_script(script_path, root_dir)
+    submit_sbatch_script(job_dir, root_dir)
 
 
