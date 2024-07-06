@@ -18,14 +18,14 @@ def upload_result(parameters):
     """
     root_dir = parameters["root_dir"]
     result_type = ""
-    if parameters["Type"] == "zip":
+    if parameters["type"] == "zip":
         result_type = ".zip"
-    elif parameters["Type"] == "json":
+    elif parameters["type"] == "json":
         result_type = ".json"
     else:
-        log_error(f'Invalid Type word: {parameters["Type"]}', root_dir)
+        log_error(f'Invalid Type word: {parameters["type"]}', root_dir)
         # TODO: return something to the backend
-    db_job_id = parameters["JobID"]
+    db_job_id = parameters["id"]
     presigned_response = parameters["PresignedResponse"]
     job_dir = os.path.join(root_dir, db_job_id, f'{db_job_id}{result_type}')
     try:
