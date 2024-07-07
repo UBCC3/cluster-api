@@ -1,11 +1,11 @@
 import json
 
-from .cancel_job import cancel_job
-from .check_status import check_status
-from .clean_result import clean_result
-from .upload_result import upload_result
-from .submit_job import submit_job
-from .util import log_error
+from cancel_job import cancel_job
+from check_status import check_status
+from clean_result import clean_result
+from upload_result import upload_result
+from submit_job import submit_job
+from util import log_error
 
 root_dir = "."
 
