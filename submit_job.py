@@ -20,7 +20,7 @@ def write_sbatch_script(db_job_id, root_dir):
     try:
         os.mkdir(job_dir)
     except OSError as error:
-        print(error, file=sys.stderr)
+        print(error, file=sys.stderr)  # write to stderr to prevent contaminating standard output
     with open(job_dir + "/submit_job.sh", "w") as file:
         file.write(f'''#!/bin/bash
         #SBATCH --job-name={db_job_id}
@@ -62,7 +62,12 @@ def submit_job(job_input_data: dict) -> None:
     job_calculation_type = job_input_data["calculation"]
     job_solvent_effects = job_input_data["solventEffects"]
     job_dir = os.path.join(root_dir, db_job_id)
-    write_sbatch_script(db_job_id, root_dir)
-    return submit_sbatch_script(job_dir, root_dir)
+    try:
+        write_sbatch_script(db_job_id, root_dir)
+    except:
+        clean_up_result = clean_up(job_dir)
+        return {'status':'FAILURE'}
+    else:
+        return submit_sbatch_script(job_dir, root_dir)
 
 
