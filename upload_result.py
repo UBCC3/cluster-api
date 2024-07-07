@@ -2,7 +2,7 @@ import os
 
 import requests
 
-from .util import log_error
+from util import log_error
 
 def upload_result(parameters):
     """
