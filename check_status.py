@@ -1,6 +1,6 @@
 import subprocess
 
-from util import get_slurm_id, log_error
+from .util import get_slurm_id, log_error
 
 def check_status(parameters):
     """
@@ -28,6 +28,7 @@ def check_job_queue(db_job_id, db_job_status, root_dir):
     Args:
         db_job_id (str): job ID in the database
         db_job_status (str): current status in the database ('SUBMITTED' or 'RUNNING')
+        root_dir (str): the root directory path
     Returns:
         0 (nothing change for the job) or a dictionary with additional job information
     """
@@ -35,11 +36,6 @@ def check_job_queue(db_job_id, db_job_status, root_dir):
         slurm_job_id = get_slurm_id(db_job_id, root_dir)
         command = ["squeue", "--jobs", slurm_job_id, "--format=State,StartTime"]
         result = subprocess.run(command, capture_output=True, text=True, check=True)
-        if result.stdout:  # if the job is still pending or running
-            lines = result.stdout.splitlines()
-            job_info = lines[1].split()
-            if job_info[0] == "RUNNING" and db_job_status == "SUBMITTED":
-                return {"status": "RUNNING", "started": job_info[1]}
         if result.stdout:  # if the job is still pending or running
             lines = result.stdout.splitlines()
             job_info = lines[1].split()
@@ -87,6 +83,8 @@ def check_job_status(slurm_job_id):
                 end_time = parts[end_index]
                 if state == "COMPLETED" and derived_exit_code == "0:0":
                     return {"status": "COMPLETED", "started": start_time, "finished": end_time}
+                elif state == "CANCELLED":
+                    return {"status": "CANCELLED", "started": start_time, "finished": end_time}
                 else:
                     comment = parts[comment_index] if comment_index is not None else "No additional info"
                     return {"status": "FAILED", "started": start_time, "finished": end_time, "error_message": comment}

@@ -1,6 +1,6 @@
 import os
 
-from util import clean_up
+from .util import clean_up
 
 def clean_result(parameters):
     db_job_id = parameters["id"]
