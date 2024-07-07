@@ -1,6 +1,6 @@
 import subprocess
 
-from .util import get_slurm_id, log_error
+from util import get_slurm_id, log_error
 
 def check_status(parameters):
     """
