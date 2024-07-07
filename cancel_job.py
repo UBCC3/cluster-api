@@ -1,6 +1,6 @@
 import subprocess
 import os
-from .util import get_slurm_id, clean_up, is_job_in_queue
+from util import get_slurm_id, clean_up, is_job_in_queue
 def cancel_job(job_input_data) -> bool:
     """
     Cancels a job queued/currently running
