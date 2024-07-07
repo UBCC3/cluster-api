@@ -1,11 +1,11 @@
 import json
 import subprocess
 import os
-from .util import clean_up
+from util import clean_up
 
 # TODO: Add S3 Upload
 # TODO: Modify code for Psi4 and QCEngine
-def write_sbatch_script(job_name, root_dir):
+def write_sbatch_script(db_job_id, root_dir):
     """
     Sets up a directory with the job_name as its name.
     Creates an sbatch script to be run.
@@ -15,16 +15,16 @@ def write_sbatch_script(job_name, root_dir):
     
     Returns: None
     """
+    job_dir = os.path.join(root_dir, db_job_id)
     try:
-        os.mkdir(job_name)
+        os.mkdir(job_dir)
     except OSError as error:
         print(error)
-    job_dir = os.path.join(root_dir+job_name)
     with open(job_dir + "/submit_job.sh", "w") as file:
         file.write(f'''#!/bin/bash
-        #SBATCH --job-name={job_name}
-        #SBATCH --output={job_name}.out
-        #SBATCH --error={job_name}.err
+        #SBATCH --job-name={db_job_id}
+        #SBATCH --output={db_job_id}.out
+        #SBATCH --error={db_job_id}.err
         echo "Hello"
 
 
