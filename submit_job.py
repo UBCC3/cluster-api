@@ -1,6 +1,7 @@
 import json
 import subprocess
 import os
+import sys
 from util import clean_up
 
 # TODO: Add S3 Upload
@@ -19,7 +20,7 @@ def write_sbatch_script(db_job_id, root_dir):
     try:
         os.mkdir(job_dir)
     except OSError as error:
-        print(error)
+        print(error, file=sys.stderr)
     with open(job_dir + "/submit_job.sh", "w") as file:
         file.write(f'''#!/bin/bash
         #SBATCH --job-name={db_job_id}
