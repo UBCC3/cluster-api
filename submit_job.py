@@ -62,6 +62,6 @@ def submit_job(job_input_data: dict) -> None:
     job_solvent_effects = job_input_data["solventEffects"]
     job_dir = os.path.join(root_dir, db_job_id)
     write_sbatch_script(db_job_id, root_dir)
-    submit_sbatch_script(job_dir, root_dir)
+    return submit_sbatch_script(job_dir, root_dir)
 
 
