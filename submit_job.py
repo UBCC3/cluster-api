@@ -26,10 +26,12 @@ def write_sbatch_script(job_dir: str, script_path: str, job_input_data: dict):
 
     with open(script_path, "w") as file:
         file.write(f'''#!/bin/bash
-        #SBATCH --job-name={job_name}
-        #SBATCH --output={job_name}.out
-        #SBATCH --error={job_name}.err
-        echo "Hello"
+    #SBATCH --job-name={job_name}
+    #SBATCH --output=f'{job_dir}/{job_name}.out'
+    #SBATCH --error=f'{job_dir}/{job_name}.err'
+
+    cd {job_dir}
+    echo "Hello"
 
 
 
