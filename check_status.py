@@ -32,21 +32,19 @@ def check_job_queue(db_job_id, db_job_status, root_dir):
     Returns:
         0 (nothing change for the job) or a dictionary with additional job information
     """
+    slurm_job_id = get_slurm_id(db_job_id, root_dir)
     try:
-        slurm_job_id = get_slurm_id(db_job_id, root_dir)
-        command = ["squeue", "--jobs", slurm_job_id, "--format=State,StartTime"]
+        command = ["squeue", "-j", slurm_job_id, "--Format=State,StartTime"]
         result = subprocess.run(command, capture_output=True, text=True, check=True)
-        if result.stdout:  # if the job is still pending or running
-            lines = result.stdout.splitlines()
-            job_info = lines[1].split()
-            if job_info[0] == "RUNNING" and db_job_status == "SUBMITTED":
-                return {"status": "RUNNING", "started": job_info[1]}
-            return 0
-        else: # if the job is completed or failed
-            check_job_status(slurm_job_id) 
-    except subprocess.CalledProcessError as e:
-        raise Exception(f'Error running squeue for job ID {db_job_id}: {e.stderr}')       
-        
+    except:
+        return check_job_status(slurm_job_id)
+    else:
+        lines = result.stdout.splitlines()
+        job_info = lines[1].split()
+        if job_info[0] == "RUNNING" and db_job_status == "SUBMITTED":
+            return {"status": "RUNNING", "started": job_info[1]}
+        return 0
+
 def check_job_status(slurm_job_id):
     """
     Check the job information when the job is not in the queue (CANCELLED, FAILED, OUT_OF_MEMORY, TIMEOUT, ...)
@@ -55,7 +53,7 @@ def check_job_status(slurm_job_id):
     Returns: 
         a dictionary with additional job information
     """
-    command = ["sacct", "--jobs", slurm_job_id, "--format=JobID,State,DerivedExitCode,Comment,Start,End"]
+    command = ["sacct", "-j", slurm_job_id, "--format=JobID,State,Start,End,DerivedExitCode,Comment"]
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         """
