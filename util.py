@@ -21,7 +21,7 @@ def get_slurm_id(db_job_id, root_dir) -> str:
     Args: a string with the id given to the job by the db
     Returns: a string with the id given to the job by slurm
     """
-    job_dir = os.path.join(root_dir+db_job_id)
+    job_dir = os.path.join(root_dir, db_job_id)
     slurm_job_id = ""
     try:
         with open(job_dir + "/slurm_id.txt", "r") as file:
