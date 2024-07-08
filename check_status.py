@@ -81,7 +81,7 @@ def check_job_status(slurm_job_id):
                 end_time = parts[end_index]
                 if state == "COMPLETED" and derived_exit_code == "0:0":
                     return {"status": "COMPLETED", "started": start_time, "finished": end_time}
-                elif state == "CANCELLED":
+                elif state == "CANCELLED" or state == "CANCELLED+":
                     return {"status": "CANCELLED", "started": start_time, "finished": end_time}
                 else:
                     comment = parts[comment_index] if comment_index is not None else "No additional info"
