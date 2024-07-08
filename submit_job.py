@@ -2,47 +2,51 @@ import json
 import subprocess
 import os
 import sys
-from util import clean_up
+from util import clean_up, log_error
 
 # TODO: Add S3 Upload
 # TODO: Modify code for Psi4 and QCEngine
-def write_sbatch_script(db_job_id, root_dir):
+def write_sbatch_script(job_dir: str, script_path: str, job_input_data: dict):
     """
-    Sets up a directory with the job_name as its name.
     Creates an sbatch script to be run.
-
-    Args:
-    - A string that has the name of the job which will be used as dir name.
     
+    Args:
+    job_dir - path to directory in which job will run
+    script_path - path to sbatch script
+    job_input_data - dictionary containing all job input information
+
     Returns: None
     """
-    job_dir = os.path.join(root_dir, db_job_id)
-    try:
-        os.mkdir(job_dir)
-    except OSError as error:
-        print(error, file=sys.stderr)  # write to stderr to prevent contaminating standard output
-    with open(job_dir + "/submit_job.sh", "w") as file:
+    job_name = job_input_data["id"]
+    job_basis_set = job_input_data["basisSet"]
+    job_theory = job_input_data["theory"]
+    job_wave_theory = job_input_data["waveTheory"]
+    job_calculation_type = job_input_data["calculation"]
+    job_solvent_effects = job_input_data["solventEffects"]
+
+    with open(script_path, "w") as file:
         file.write(f'''#!/bin/bash
-        #SBATCH --job-name={db_job_id}
-        #SBATCH --output={db_job_id}.out
-        #SBATCH --error={db_job_id}.err
+        #SBATCH --job-name={job_name}
+        #SBATCH --output={job_name}.out
+        #SBATCH --error={job_name}.err
         echo "Hello"
 
 
 
         ''')
 
-
-def submit_sbatch_script(job_dir, root_dir):
+def submit_sbatch_script(job_dir: str, script_path: str):
     """
     Submits the job to SLURM via sbatch
 
-    Args: The path to the submit_job bash file
+    Args: job_dir - directory in which job runs
+          script_path - path to the submit_job bash file
 
     Returns: None
     """
-    result = subprocess.run(["sbatch", job_dir  + "/submit_job.sh"], capture_output=True, text=True)
+
     try:
+        result = subprocess.run(["sbatch", script_path], capture_output=True, text=True)
         slurm_job_id = (result.stdout.split()[-1])
         with open(job_dir + "/slurm_id.txt", "w") as file:
             file.write(slurm_job_id)
@@ -54,20 +58,26 @@ def submit_sbatch_script(job_dir, root_dir):
         return {'status':'SUCCESS'}
 
 def submit_job(job_input_data: dict) -> None:
-    db_job_id = job_input_data["id"]
     root_dir = job_input_data["root_dir"]
-    job_basis_set = job_input_data["basisSet"]
-    job_theory = job_input_data["theory"]
-    job_wave_theory = job_input_data["waveTheory"]
-    job_calculation_type = job_input_data["calculation"]
-    job_solvent_effects = job_input_data["solventEffects"]
+    db_job_id = job_input_data["id"]
     job_dir = os.path.join(root_dir, db_job_id)
+    script_path = os.path.join(job_dir, "submit_job.sh")
+
+# create directory in which job will run
+# note: if root_dir is not writable, then log_error will also fail here.
+
     try:
-        write_sbatch_script(db_job_id, root_dir)
+        os.mkdir(job_dir)
+    except OSError as error:
+        log_error(error, root_dir) # log stderr to keep standard output clean
+
+# create sbatch script and then submit it
+
+    try:
+        write_sbatch_script(job_dir, script_path, job_input_data)
     except:
         clean_up_result = clean_up(job_dir)
         return {'status':'FAILURE'}
     else:
-        return submit_sbatch_script(job_dir, root_dir)
-
+        return submit_sbatch_script(job_dir, script_path)
 
