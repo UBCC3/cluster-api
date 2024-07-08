@@ -69,7 +69,7 @@ def check_job_status(slurm_job_id):
         job_index = header.index("JobID")
         state_index = header.index("State")
         derived_exit_code_index = header.index("DerivedExitCode")
-        comment_index = header.index("Comment") if "Comment" in header else None
+        comment_index = header.index("Comment")
         start_index = header.index("Start")
         end_index = header.index("End")
         for line in lines[2:]:
@@ -84,7 +84,7 @@ def check_job_status(slurm_job_id):
                 elif state == "CANCELLED" or state == "CANCELLED+":
                     return {"status": "CANCELLED", "started": start_time, "finished": end_time}
                 else:
-                    comment = parts[comment_index] if comment_index is not None else "No additional info"
+                    comment = parts[comment_index] if comment_index < len(parts) else "No additional info"
                     return {"status": "FAILED", "started": start_time, "finished": end_time, "error_message": comment}
     except subprocess.CalledProcessError as e:
         raise Exception(f'Error running sacct: {e.stderr}')
