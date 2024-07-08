@@ -28,7 +28,7 @@ def get_slurm_id(db_job_id, root_dir) -> str:
             slurm_job_id = file.readline()
         return slurm_job_id
     except FileNotFoundError as error:
-        log_error(error)
+        log_error(error, root_dir)
     
 def clean_up(job_dir):
     """
