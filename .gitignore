@@ -1,2 +1,4 @@
 .idea
+/__pycache__
 test_cluster.py
+error_log.txt
