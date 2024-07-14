@@ -25,6 +25,7 @@ def write_sbatch_script(job_dir: str, script_path: str, job_input_data: dict):
     job_name = job_input_data["id"]
     job_basis_set = job_input_data["basisSet"]
     job_theory = job_input_data["theory"]
+    job_structure = job_input_data["job_structure"]
     job_wave_theory = job_input_data["waveTheory"]
     job_calculation_type = job_input_data["calculation"]
     job_solvent_effects = job_input_data["solventEffects"]
@@ -49,7 +50,8 @@ def write_sbatch_script(job_dir: str, script_path: str, job_input_data: dict):
     basisSet="{job_basis_set}"
     method="{job_theory}"
     calculationType="{job_calculation_type}"
-    python3 {qcEngine_script_loc} "$calculationType" "$method" "$basisSet"
+    structure = "{job_structure}"
+    python3 {qcEngine_script_loc} "$calculationType" "$method" "$basisSet" "$structure"
 
         ''')
 
@@ -97,6 +99,4 @@ def submit_job(job_input_data: dict) -> None:
         clean_up_result = clean_up(job_dir)
         return {'status':'FAILURE'}
     else:
-        # return submit_sbatch_script(job_dir, script_path)
-        return True
-
+        return submit_sbatch_script(job_dir, script_path)
