@@ -4,15 +4,6 @@ import subprocess
 import shutil
 from openbabel import openbabel
 
-def convert_file_to_xyz(input_string, job_directory):
-    obc = openbabel.OBConversion()
-    obc.SetOutFormat("xyz")
-
-    structure = openbabel.OBMol()
-    obc.ReadString(input_string)
-
-    obc.WriteFile(structure, job_directory.replace("pdb","xyz"))
-
 def log_error(error_message, root_dir):
     """
     Logs an error message to the text file with the current timestamp

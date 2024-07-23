@@ -25,10 +25,12 @@ def write_sbatch_script(job_dir: str, script_path: str, job_input_data: dict):
     job_name = job_input_data["id"]
     job_basis_set = job_input_data["basisSet"]
     job_theory = job_input_data["theory"]
-    job_structure = job_input_data["job_structure"]
     job_wave_theory = job_input_data["waveTheory"]
     job_calculation_type = job_input_data["calculation"]
     job_solvent_effects = job_input_data["solventEffects"]
+    job_structure_dir = os.path.join(job_dir, "job_structure.xyz")
+    with open(job_structure_dir, "w") as file:
+        file.write(job_input_data["job_structure"])
 
     with open(script_path, "w") as file:
         file.write(f'''#!/bin/bash
@@ -50,7 +52,7 @@ def write_sbatch_script(job_dir: str, script_path: str, job_input_data: dict):
     basisSet="{job_basis_set}"
     method="{job_theory}"
     calculationType="{job_calculation_type}"
-    structure = "{job_structure}"
+    structure = "{job_structure_dir}"
     python3 {qcEngine_script_loc} "$calculationType" "$method" "$basisSet" "$structure"
 
         ''')

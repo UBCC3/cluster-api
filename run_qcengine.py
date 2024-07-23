@@ -3,7 +3,7 @@ import qcengine as qcng
 import sys
 
 def execute_psi4(calculation_type, method, basis_set, job_structure):
-    mol = qcel.models.Molecule.from_data(job_structure)
+    mol = qcel.models.Molecule.from_file(job_structure)
 
     inp = qcel.models.AtomicInput(
         molecule=mol,
