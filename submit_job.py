@@ -40,7 +40,7 @@ def write_sbatch_script(job_dir: str, script_path: str, job_input_data: dict):
     #SBATCH --nstasks = {nstasks}
     #SBATCH --mem-per-cpu=1024M
     #SBATCH --time={max_walltime}
-    
+
 
     cd {job_dir}
     module load StdEnv/2023
