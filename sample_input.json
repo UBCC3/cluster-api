@@ -1,7 +1,1 @@
-{"id":"886b7de3-cbae-4edd-9f84-49eca5e2e66c",
-"source":"UPLOADED",
-"theory":"Hartree-Fock",
-"basisSet":"cc-pVDZ",
-"waveTheory":"null",
-"calculation":"Single-Point-Calculation",
-"solventEffects":"null"}
+{"action":"submit","parameters":{"id":"886b7de3-cbae-4edd-9f84-49eca5e2e66c","source":"UPLOADED","theory":"Hartree-Fock","basisSet":"cc-pVDZ","waveTheory":"null","calculation":"Single-Point-Calculation","solventEffects":"null"}}

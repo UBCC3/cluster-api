@@ -2,6 +2,7 @@ import datetime
 import os
 import subprocess
 import shutil
+from openbabel import openbabel
 
 def log_error(error_message, root_dir):
     """
