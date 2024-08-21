@@ -1,8 +1,4 @@
 {
-    "job information": {
-        "_comment": "information can get from the database like jobId, jobName, startTime, endTime, executionTime, status do not need to be included in here",
-        "totalFileSize": "2 GB"
-    },
     "structure information": {
         "1": {
             "visualData": {
@@ -41,7 +37,7 @@
                         {"label": "stage", "span": 3}
                     ],[
                         {"label": "", "span": 1},
-                        {"label": "1", "span": 1}
+                        {"label": "1", "span": 1},
                         {"label": "2", "span": 1},
                         {"label": "2", "span": 1}
                     ]],
