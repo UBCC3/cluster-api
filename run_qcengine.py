@@ -52,7 +52,7 @@ def format_psi4_single_point(result: dict):
     return formatted_result
     
 def save_to_json(formatted_result: dict, job_name: str):
-    with open("result.json", 'w') as file:
+    with open(job_structure_path + "/" + "result.json", 'w') as file:
         json.dump(formatted_result, file)
 
 def execute_psi4(calculation_type: str, method: str, basis_set: str, job_structure_path: str):
@@ -66,7 +66,7 @@ def execute_psi4(calculation_type: str, method: str, basis_set: str, job_structu
         )
 
     result = qcng.compute(inp, "psi4",return_dict=True)
-    with open(job_name + ".out", 'w') as file:
+    with open(job_structure_path + "/" + job_name + ".out", 'w') as file:
         file.write(str(result))
     return result
 
