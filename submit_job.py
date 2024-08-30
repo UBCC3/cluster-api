@@ -6,9 +6,9 @@ from util import clean_up, log_error
 
 nstasks = 1
 max_walltime = "00:05"
-qcEngine_script_loc = "./run_qcengine.py"
+psi4_env_dir = os.environ.get("PSI4_ENV_DIR")
+qcEngine_script_loc = os.environ.get("QCENGINE_SCRIPT_LOC")
 
-# TODO: Add S3 Upload
 # TODO: Modify code for Psi4 and QCEngine
 def write_sbatch_script(job_dir: str, script_path: str, job_input_data: dict):
     """
