@@ -9,7 +9,6 @@ max_walltime = "00:05"
 psi4_env_dir = os.environ.get("PSI4_ENV_DIR")
 qcEngine_script_loc = os.environ.get("QCENGINE_SCRIPT_LOC")
 
-# TODO: Add S3 Upload
 # TODO: Modify code for Psi4 and QCEngine
 def write_sbatch_script(job_dir: str, script_path: str, job_input_data: dict):
     """
@@ -28,7 +27,7 @@ def write_sbatch_script(job_dir: str, script_path: str, job_input_data: dict):
     job_wave_theory = job_input_data["waveTheory"]
     job_calculation_type = job_input_data["calculation"]
     job_solvent_effects = job_input_data["solventEffects"]
-    job_structure_dir = os.path.join(job_dir, "job_structure.xyz")
+    job_structure_path = os.path.join(job_dir, "job_structure.xyz")
     with open(job_structure_dir, "w") as file:
         file.write(job_input_data["job_structure"])
 
@@ -47,13 +46,12 @@ def write_sbatch_script(job_dir: str, script_path: str, job_input_data: dict):
     module load gcc/12.3
     module load openmpi/4.1.5
     module load psi4/1.9
-
-    source {psi4_env_dir}
+    jobName="{job_name}"
     basisSet="{job_basis_set}"
     method="{job_theory}"
     calculationType="{job_calculation_type}"
-    structure = "{job_structure_dir}"
-    python3 {qcEngine_script_loc} "$calculationType" "$method" "$basisSet" "$structure"
+    structure = "{job_structure_path}"
+    python3 {qcEngine_script_loc} "$calculationType" "$method" "$basisSet" "$structure" "$jobName"
 
         ''')
 
